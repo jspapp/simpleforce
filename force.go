@@ -280,6 +280,40 @@ func (client *Client) DownloadFile(contentVersionID string, filepath string) err
 	return err
 }
 
+// DownloadAttachment downloads a Attachment based on the REST API path given. Saves to filePath.
+func (client *Client) DownloadAttachment(attachmentID string, filepath string) error {
+
+	apiPath := fmt.Sprintf("/services/data/v%s/sobjects/ContentVersion/%s/body", client.apiVersion, attachmentID)
+
+	baseURL := strings.TrimRight(client.baseURL, "/")
+	url := fmt.Sprintf("%s%s", baseURL, apiPath)
+
+	// Get the data
+	httpClient := client.httpClient
+	req, err := http.NewRequest("GET", url, nil)
+	req.Header.Add("Content-Type", "application/json; charset=UTF-8")
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Authorization", "Bearer "+client.sessionID)
+
+	// resp, err := http.Get(url)
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Create the file
+	out, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	// Write the body to file
+	_, err = io.Copy(out, resp.Body)
+	return err
+}
+
 func parseHost(input string) string {
 	parsed, err := url.Parse(input)
 	if err == nil {
