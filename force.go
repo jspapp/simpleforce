@@ -283,7 +283,7 @@ func (client *Client) DownloadFile(contentVersionID string, filepath string) err
 // DownloadAttachment downloads a Attachment based on the REST API path given. Saves to filePath.
 func (client *Client) DownloadAttachment(attachmentID string, filepath string) error {
 
-	apiPath := fmt.Sprintf("/services/data/v%s/sobjects/ContentVersion/%s/body", client.apiVersion, attachmentID)
+	apiPath := fmt.Sprintf("/services/data/v%s/sobjects/Attachment/%s/Body", client.apiVersion, attachmentID)
 
 	baseURL := strings.TrimRight(client.baseURL, "/")
 	url := fmt.Sprintf("%s%s", baseURL, apiPath)
